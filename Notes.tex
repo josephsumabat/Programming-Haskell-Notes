@@ -5,6 +5,7 @@
 \usepackage{hyperref}
 \usepackage{fancyvrb}
 \usepackage{graphicx}
+\usepackage[section]{placeins}
 \title{Haskell Learning}
 \author{Joseph Sumabat}
 \date{}
@@ -66,7 +67,8 @@
 
   \subsubsection{Bottom Type}
   These types actually contain an additional value of $\bot$ which is a value
-  included in every type allowing for computations which don't terminate. 
+  \textbf{included in every type} allowing for computations which don't
+  terminate.  
   \bigskip
 
   $\bot$ is necessary because of the existance of general recursion and is
@@ -79,17 +81,18 @@
   
   Working in a limited subset 
 
-\subsection{Constructive vs Intutionistic logic}
+\subsection{Constructive vs Classical logic}
   Philosophically the difference is in 
   \bigskip
   
-  In classical (intuitionstic) logic every proposition is assigned a value $T$ or $F$ by law
+  In classical  logic every proposition is assigned a value $T$ or $F$ by law
   of excluded middle (think truth tables). \textbf{this is not the case for constructive logic}
   In constructive logic we lose out on law of excluded middle and by extension
   proofs by contradiction. Instead in order to prove things we must show that a proposition is
   \textit{witnessed} (in this context inhabited).
 
 \begin{itemize}
+  \item
 \end{itemize}
 \subsection{Curry Howard Isomorphism}
 
@@ -100,7 +103,7 @@ correspond to predicate logic for example)
 \begin{itemize}
   \item Think of a Haskell type as a set and a program as a proof that such a set is inhabited
   \item From my understanding: Your compiler also functions as a proof checker
-  \item From a practical standpoint
+  \item From a practical standpoint this means that 
   \item Note: Haskell
 \end{itemize}
      Note that the propositional logic system that Haskell types map to is \textbf{unsound}
@@ -115,8 +118,45 @@ correspond to predicate logic for example)
       that the bottom type terminates the program so I'm not entirely sure whether
       you can consider it a value.
 
+\subsection{More powerful type systems (dependent types)}
 
-\section{Common Structures}
+
+\section{Language and Examples}
+
+\subsection{Making types}
+\begin{itemize}
+  \item  Haskell has algebraic datatypes 
+    \begin{itemize}
+      \item sum type using | and product type as multiple parameters
+   \end{itemize}
+ \item Types can be recursively defined as below:
+\end{itemize}
+Sum type example:
+    \begin{verbatim}
+      data Boolean = True | False
+    \end{verbatim}
+Product Type example:
+    \begin{verbatim}
+      data Pair a = Pair a a
+    \end{verbatim}
+Recursive Type example:
+    \begin{verbatim}
+      data Tree a = Node a Tree Tree | Leaf a
+    \end{verbatim}
+
+\subsection{Typeclasses}
+Paremetric polymorphism is done through typeclasses. Typeclasses define
+implmentation of a function over members of the typeclass
+
+\begin{verbatim}
+    instance Functor MyList where
+        fmap f (Cons n rest) = Cons (f n) (fmap f rest)
+        fmap f None = None
+    \end{verbatim}
+\FloatBarrier
+
 \subsection{Applicatives}
 
+
+\appendix
 \end{document}
