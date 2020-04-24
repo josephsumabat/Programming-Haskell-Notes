@@ -75,14 +75,16 @@
   witnessed by the equation $x = x$.
 
   \subsubsection{Hask is not a category}
-  Because of the existance of both $\bot$ and the fact that Haskell is a non-strict language
-  with the function \verb|seq| defined, Hask actually violates the category laws of category
-  theory.
-  
-  Working in a limited subset 
+  Because of the existance of both $\bot$ and the fact that Haskell is a
+  non-strict language with the function \verb|seq| defined, Hask actually
+  violates the category laws of category theory.
+  \bigskip
+
+  We usually think of working within a limited subset without either bottom
+  values or \verb|seq| so that we can apply category theorestic principles.
 
 \subsection{Constructive vs Classical logic}
-  Philosophically the difference is in 
+  Philosophically the difference is in having to prove things via a construction
   \bigskip
   
   In classical  logic every proposition is assigned a value $T$ or $F$ by law
@@ -95,7 +97,6 @@
   \item
 \end{itemize}
 \subsection{Curry Howard Isomorphism}
-
 
 Isomorphism between types and Proofs. Haskell types have a mapping to \textbf{Propositional} Logic
 Note that more powerful type systems can map to more powerful systems of logic (Dependent types can
@@ -120,14 +121,14 @@ correspond to predicate logic for example)
 
 \subsection{More powerful type systems (dependent types)}
 
-
 \section{Language and Examples}
 
 \subsection{Making types}
 \begin{itemize}
-  \item  Haskell has algebraic datatypes 
+  \item  Haskell has generalized algebraic datatypes (GADTs)
     \begin{itemize}
-      \item sum type using | and product type as multiple parameters
+      \item sum type using \verb.|. and product type as multiple parameters
+            to a type constructor
    \end{itemize}
  \item Types can be recursively defined as below:
 \end{itemize}
@@ -147,7 +148,15 @@ Recursive Type example:
 \subsection{Typeclasses}
 Paremetric polymorphism is done through typeclasses. Typeclasses define
 implmentation of a function over members of the typeclass
+\bigskip
 
+Example functor typeclass with fmap
+\begin{verbatim}
+    class  Functor f  where
+        fmap :: (a -> b) -> f a -> f b
+\end{verbatim}
+
+Example functor instance for a \verb|MyList| type
 \begin{verbatim}
     instance Functor MyList where
         fmap f (Cons n rest) = Cons (f n) (fmap f rest)
