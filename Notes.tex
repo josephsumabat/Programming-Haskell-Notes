@@ -6,6 +6,7 @@
 \usepackage{fancyvrb}
 \usepackage{graphicx}
 \usepackage[section]{placeins}
+\usepackage{hyperref}
 \title{Haskell Learning}
 \author{Joseph Sumabat}
 \date{}
@@ -18,17 +19,28 @@
 
 \section{Introduction}
   This document is for me to document my learning particularly with respect to Haskell.
+
+  Disclaimer: This is just my understanding of information that I've read about the language
+  and some of the theory behind it. I am by no means a mathematician and there
+  may be innacuracies in my understandings (please let me know if there are!)
+  so don't use this as a source or anything like that.
+
   \subsection{Resources}
   Listed here are any resources I used or have found useful in my learning process
+  \subsubsection{Books}
   \begin{itemize}
     \item
       \href
       {https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/}
       {Category theory for programmers} by Bartosz Milewski
+      \label{src:Category theory for programmers}
     \item
       \href
-      {http://math.andrej.com/2016/08/06/hask-is-not-a-category/}
-      {Hask is not a category} by Andrej Bauer
+      {https://www.cs.kent.ac.uk/people/staff/sjt/TTFP/}
+      {Type Theory and Functional Programming} by Simon Thompson
+  \end{itemize}
+  \subsubsection{Wikis}
+  \begin{itemize}
     \item
       \href
       {https://wiki.haskell.org/Haskell}
@@ -40,41 +52,82 @@
           {The category Hask}
       \end{itemize}
     \item
+      Wikipedia
+      \begin{itemize}
+        \item
+          \href
+          {https://en.wikipedia.org/wiki/Intuitionistic_type_theory}
+          {Intuitionistic type theory}
+        \item
+          \href
+          {https://en.wikipedia.org/wiki/Brouwer%E2%80%93Heyting%E2%80%93Kolmogorov_interpretation}
+          {Brouwer–Heyting–Kolmogorov interpretation}
+      \end{itemize}
+  \end{itemize}
+  \subsubsection{Blogs}
+  \begin{itemize}
+    \item
       \href
-      {https://www.cs.ox.ac.uk/jeremy.gibbons/publications/fast+loose.pdf}
-      {Fast and loose reasoning is morally correct} by Jeremy Gibbons
+      {http://math.andrej.com/2016/08/06/hask-is-not-a-category/}
+      {Hask is not a category} by Andrej Bauer
+      \label{src:Hask is not a category}
     \item
       \href
       {https://codewords.recurse.com/issues/three/algebra-and-calculus-of-algebraic-data-types}
       {The Algebra (and calculus!) of Algebraic Data types} by John Burget
+  \end{itemize}
+  \subsubsection{Papers}
+  \begin{itemize}
     \item
       \href
-      {https://www.cs.kent.ac.uk/people/staff/sjt/TTFP/}
-      {Type Theory and Functional Programming} by Simon Thompson
+      {https://www.cs.ox.ac.uk/jeremy.gibbons/publications/fast+loose.pdf}
+      {Fast and loose reasoning is morally correct} by Jeremy Gibbons
+  \end{itemize}
+  \subsubsection{Other}
+  \begin{itemize}
+    \item
+      \href
+      {https://www.andrew.cmu.edu/user/avigad/Teaching/classical.pdf}
+      {Classical and Constructive Logic} by Jeremy Avigad
   \end{itemize}
 
 \section{Types}
 
 \subsection{Hask}
-  "Objects of Hask are Haskell Types".
+Hask is ostensibly the category of Haskell types\footnote{See
+\hyperref[sec:Hask is not a category]{Hask is not a categroy}}. That is to say
+"Objects of Hask are Haskell Types" and should follow the category laws of
+associativity and identitycategory laws of associativity and identity
+
   \bigskip
 
-  Haskell types can be \textbf{thought of} like sets \footnote{There is a distinction between
-  set and object of category hask (or set) }. e.g. \verb Int  could be thought
-  of as the set of values from $\{-2^{29},..,2^{29} - 1\}$ and \verb|Boolean| as
-  the set containing two elements $\{True, False\}$
+  Haskell types can be \textbf{thought of} like sets \footnote{There is a
+    distinction between set and object of category hask (or set), there's also
+    a distinction between sets and types but I like the comparison and Bartosz
+    Milewski uses it in \hyperref[src:Category theory for programmers]{Category
+  theory for programmers}}. e.g. \verb Int  could be thought of as the set of
+  values from $\{-2^{29},..,2^{29} - 1\}$ and \verb|Boolean| as the set
+  containing two elements $\{True, False\}$. With \hyperref[sec:Making
+  types]{GADTs} (sum types and product types) we can compose types together to
+  form more complex types (e.g. the two element \verb|Boolean| type can be
+  thought of as the sum of two unit types.
+
   \bigskip
 
   \subsubsection{Bottom Type}
   These types actually contain an additional value of $\bot$ which is a value
   \textbf{included in every type} allowing for computations which don't
-  terminate.  
+  terminate. $\bot$ traditionally is used to represent a type with \textbf{no}
+  values (which \verb|Void| is meant to represent in Haskell) and is thus
+  unprovable constructively.
   \bigskip
 
-  $\bot$ is necessary because of the existance of general recursion and is
-  witnessed by the equation $x = x$.
+  $\bot$ in Haskell as a value is necessary because of the existance of general
+  recursion and is witnessed by the equation $x = x$. The inclusion of it
+  within every type is necessary for the language to be turing complete.
 
   \subsubsection{Hask is not a category}
+  \label{sec:Hask is not a category}
   Because of the existance of both $\bot$ and the fact that Haskell is a
   non-strict language with the function \verb|seq| defined, Hask actually
   violates the category laws of category theory.
@@ -83,29 +136,66 @@
   We usually think of working within a limited subset without either bottom
   values or \verb|seq| so that we can apply category theorestic principles.
 
-\subsection{Constructive vs Classical logic}
-  Philosophically the difference is in having to prove things via a construction
-  \bigskip
-  
-  In classical  logic every proposition is assigned a value $T$ or $F$ by law
-  of excluded middle (think truth tables). \textbf{this is not the case for constructive logic}
-  In constructive logic we lose out on law of excluded middle and by extension
-  proofs by contradiction. Instead in order to prove things we must show that a proposition is
-  \textit{witnessed} (in this context inhabited).
+\subsection{GADTs and type algebras}
 
+\subsection{Type Theory and logic}
+\subsubsection{Constructive vs Classical logic}
+
+  In classical  logic every proposition is assigned a value $T$ or $F$ 
+   \textbf{this is not the case for constructive logic} In constructive logic
+   contradiction does not suffice for proof.
+   we lose out on this property. Particularly this means we lose the law of
+   excluded middle and by extension proofs by contradiction. Instead in order
+   to prove things we must show that a proposition is \textit{witnessed}
+  \bigskip
+
+  Philosophically the difference is in a focus not on the truth or falsehood of
+  a statement ("truth in the abstract") but on the verification and its properties.
+  .Since we can no longer prove things indirectly through methods such as
+  contradiction but must actually provide a witness \textit{which must be computable}.
+  
+
+   Constructive logic is a subset of 
+   
 \begin{itemize}
-  \item
+  \item No law of excluded middle
+  \item Negation is different $\lnot A$ in classical logic corresponds to
+    $A \rightarrow \bot$
+  \item BHK interpretation o
 \end{itemize}
+
+\subsubsection{Constructive Type Theory}
+Martin-Löf type theory named after its inventor is based on the principles of constructive
+logic. Wikipedia gives the example of proving that there is a prime greater than
+
 \subsection{Curry Howard Isomorphism}
 
-Isomorphism between types and Proofs. Haskell types have a mapping to \textbf{Propositional} Logic
-Note that more powerful type systems can map to more powerful systems of logic (Dependent types can
-correspond to predicate logic for example)
+Isomorphism between types and Proofs. Haskell types have a mapping to
+\textbf{Propositional} Logic. More powerful type systems can map to
+more powerful systems of logic (Dependent types can correspond to predicate
+logic for example) , Martin-Löf was the first to make the extension to predicate
+logic through Martin-Löf type theory.
+\bigskip
+
+In the propositional sense we say that a propositional formula is true
+if it is \textit{inhabited}. Consider the type \verb|Integer|, a function
+of this type such as 
+    \begin{verbatim}
+      one::Integer
+      one = 1
+    \end{verbatim}
+proves the that the type is inhabited
+by providing a value which witnesses the type since 1 is an inhabitant of the
+type \verb|Integer|. This method of looking at programs as proofs makes it clear why
+constructive rather than classical logic is employed: since programs are what we are
+concerned with and programs are constructions, constructive logic forces us to prove
+our propositional formulas in terms of programs.
+
 \begin{itemize}
   \item Think of a Haskell type as a set and a program as a proof that such a set is inhabited
-  \item From my understanding: Your compiler also functions as a proof checker
-  \item From a practical standpoint this means that 
-  \item Note: Haskell
+  \item From my understanding: This means the compiler also functions as a proof checker
+  \item From a practical standpoint this makes verification of programs based on the type
+    system more concrete
 \end{itemize}
      Note that the propositional logic system that Haskell types map to is \textbf{unsound}
      due to the bottom type ($\bot$) which inhabits every type including void. Consider the
@@ -123,7 +213,11 @@ correspond to predicate logic for example)
 
 \section{Language and Examples}
 
+This section is largely to use as a reference for specific syntax structures
+that are common throughout the language
+
 \subsection{Making types}
+\label{sec:Making types}
 \begin{itemize}
   \item  Haskell has generalized algebraic datatypes (GADTs)
     \begin{itemize}
@@ -164,7 +258,27 @@ Example functor instance for a \verb|MyList| type
     \end{verbatim}
 \FloatBarrier
 
-\subsection{Applicatives}
+\subsection{Modules}
+Module in root src dir (everything exported)
+    \begin{verbatim}
+    module MyModule where
+    \end{verbatim}
+Module in root src dir (construcotr of type and functions exported)
+    \begin{verbatim}
+    module MyModule (MyType(MyConstructor), func1, func2) where
+    \end{verbatim}
+Module in root src dir (all construcotrs of type and functions exported)
+    \begin{verbatim}
+    module MyModule (MyType(..), func1, func2) where
+    \end{verbatim}
+Module in directory MyDir
+    \begin{verbatim}
+    module MyDir.MyModule (func1, func2) where
+    \end{verbatim}
+\subsection{Imports}
+Importing functions Module
+
+\subsection{Applicative Syntax}
 
 
 \appendix
